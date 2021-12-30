@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>振興五倍加碼券快速查詢</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+    <style type="text/css">
+        body {
+            width: 25%;
+            margin: auto;
+        }
+
+        button {
+            width: 100%;
+            height: 25pt;
+        }
+
+        .main {
+            text-align: center;
+        }
+
+            .main .notice {
+                color: firebrick;
+            }
+
+            .main textarea {
+                width: 95%;
+                font-size: 20pt;
+            }
+
+        .result-title {
+            text-align: center;
+        }
+
+        .footer {
+            color: dimgrey;
+            text-align: center;
+            margin: 20pt auto;
+            line-height: 18pt;
+        }
+
+        #result {
+            margin-bottom: 20pt;
+        }
+
+            #result li {
+                list-style: none;
+            }
+
+                #result li::before {
+                    content: '🀄'
+                }
+
+        @media only screen and (max-device-width : 375px) {
+            body {
+                width: 95%;
+            }
+        }
+
+        @media only screen and (min-device-width : 375px) and (max-device-width : 667px) {
+            body {
+                width: 75%;
+            }
+        }
+    </style>
+</head>
+
+<body onload="loadUid()">
+    <nav class="navbar navbar-dark bg-dark">
+        <h1></h1>
+        <!-- Navbar content -->
+    </nav>
+    <div class="main">
+        <div class="card text-center">
+            <div class="card-header">
+                <h3>振興五倍加碼券速查</h3>
+            </div>
+            <div class="card-body">
+                <p>
+
+                    <small class="notice"></small>
+                </p>
+                <div>
+                    <textarea id="uid" rows="5" placeholder="請輸入身分證字號（至少輸入末三碼）"></textarea><br /><br />
+                    <button type="button" class="btn btn-danger" onclick="query()">查詢</button><br /><br />
+                    <button type="button" class="btn btn-secondary" onclick="clean()">清除</button>
+                </div>
+            </div>
+            <div>
+               
+                <h3 class="result-title">查詢結果</h3>
+                <div id="result">
+                </div>
+                <div id="mask" style="display: none;">
+                    相關加碼券說明請看<a href="https://5000.gov.tw/" target="_blank">振興五倍券官網</a>
+                </div>
+            </div>
+        </div>
+            <div class="card-footer text-muted">
+                Made by Wayne Yu 2021
+            </div>
+        </div>
+
+
+        
+    <div class="footer">
+        <small>
+            <!--無廣告、無追蹤碼<br />
+            身分證字號暫存在瀏覽器內，你也可以<a href="#" onclick="clean()">清除暫存</a> <br />-->
+
+        </small>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
+    <script>
+        let coupons = [{
+            name: '【第一週】國旅券',
+            codes: ['21', '32', '98', '67', '97', '410']
+        }, {
+            name: '【第一週】i原券',
+            codes: ['64', '85']
+        }, {
+            name: '【第一週】農遊券',
+            codes: ['89', '32', '54', '597', '453', '152']
+        }, {
+            name: '【第一週】藝fun券(數位)',
+            codes: ['96', '15', '07', '30', '73', '98', '19', '11']
+        }, {
+            name: '【第一週】藝fun券(紙本)',
+            codes: ['39', '37', '23', '36', '79', '08', '14', '75']
+        }, {
+            name: '【第一週】動滋券',
+            codes: ['97', '13', '19', '55', '71', '93', '381', '734', '644', '453', '985']
+        }, {
+            name: '【第一週】客庄劵2.0',
+            codes: ['81', '900']
+        }, {
+            name: '【第一週】地方創生券',
+            codes: ['081', '105', '594', '188', '089', '396', '521', '467', '912', '798', '358', '441', '367', '941', '335']
+        }, {
+            name: '【第二週】國旅券',
+            codes: ['87', '04', '40', '29', '71']
+        }, {
+            name: '【第二週】i原券',
+            codes: ['12', '59']
+        }, {
+            name: '【第二週】農遊券',
+            codes: ['50', '13']
+        }, {
+            name: '【第二週】藝fun券(數位)',
+            codes: ['78', '00', '39', '22', '61', '23', '15']
+        }, {
+            name: '【第二週】藝fun券(紙本)',
+            codes: ['37', '76', '31', '06', '51', '65', '81']
+        }, {
+            name: '【第二週】動滋券',
+            codes: ['91', '11', '04', '18', '57', '498', '756']
+        }, {
+            name: '【第二週】客庄劵2.0',
+            codes: ['11', '439', '841', '052', '206', '161', '457', '205', '012', '293', '446', '589']
+        }, {
+            name: '【第二週】地方創生券',
+            codes: ['598', '880', '886', '675', '684', '568', '645', '456']
+        }, {
+            name: '【第三週】國旅券',
+            codes: ['44', '34', '09', '55', '35', '041']
+        }, {
+            name: '【第三週】i原券',
+            codes: ['48', '49']
+        }, {
+            name: '【第三週】農遊券',
+            codes: ['60', '75']
+        }, {
+            name: '【第三週】藝fun券(數位)',
+            codes: ['01', '92', '19', '23', '79', '95', '48', '46']
+        }, {
+            name: '【第三週】藝fun券(紙本)',
+            codes: ['31', '56', '02', '52', '44', '49', '00', '47', '59']
+        }, {
+            name: '【第三週】動滋券',
+            codes: ['82', '45', '57', '53', '00', '546', '855', '865', '012', '983']
+        }, {
+            name: '【第三週】客庄劵2.0',
+            codes: ['14', '269']
+        }, {
+            name: '【第三週】地方創生券',
+            codes: ['771', '706', '064', '168', '191', '459', '135', '314', '366']
+        }, {
+            name: '【第四週】國旅券',
+            codes: ['32', '02', '87', '93', '82', '17']
+        }, {
+            name: '【第四週】i原券',
+            codes: ['29', '82', '71']
+        }, {
+            name: '【第四週】農遊券',
+            codes: ['315', '740', '381', '264', '285', '765', '682', '763', '373', '015', '374']
+        }, {
+            name: '【第四週】藝fun券(數位)',
+            codes: ['70', '61', '37', '85', '67', '35', '44']
+        }, {
+            name: '【第四週】藝fun券(紙本)',
+            codes: ['75', '72', '71', '28', '67', '82', '93', '56', '34', '07']
+        }, {
+            name: '【第四週】動滋券',
+            codes: ['30', '03', '51', '88']
+        }, {
+            name: '【第四週】客庄劵2.0',
+            codes: ['69']
+        }, {
+            name: '【第四週】地方創生券',
+            codes: ['743', '201', '119', '828', '221', '750', '046']
+        }]
+
+        let rs = []
+
+        let search = (ids, coupons) => {
+            let _rs = ids.map((id) => {
+                let winning = []
+                coupons.map((coupon) => {
+                    coupon.codes.map((code) => {
+                        if (id.slice(-code.length) === code) {
+                            winning.push(`${coupon.name} [${code}]`)
+                        }
+                    })
+                })
+                return {
+                    id: id,
+                    winning: winning
+                }
+            })
+            return _rs
+        }
+
+        let uid = null
+
+        function loadUid() {
+            uid = document.getElementById('uid')
+            uid.value = localStorage.getItem('uid')
+        }
+
+        function render(_rs) {
+            let result = document.getElementById('result')
+            result.innerHTML = ''
+            _rs.map((r) => {
+                let h3 = document.createElement('h3')
+                h3.appendChild(document.createTextNode(r.id))
+                result.appendChild(h3)
+
+                let span = document.createElement('span')
+                if (r.winning.length > 0) {
+                    let ul = document.createElement('ul')
+                    r.winning.map((w) => {
+                        let li = document.createElement('li')
+                        li.appendChild(document.createTextNode(w))
+                        ul.appendChild(li)
+                    })
+                    result.appendChild(ul)
+                } else {
+                    span.appendChild(document.createTextNode('都沒中'))
+                    result.appendChild(span)
+                }
+            })
+        }
+
+        function query() {
+            uid.style.display = null
+
+            let uids = uid.value.split(',').map((_uid) => _uid.trim())
+            localStorage.setItem('uid', uids.toString())
+
+            rs = search(uids, coupons)
+            render(rs)
+            document.getElementById('mask').style.display = 'block'
+        }
+
+        function mask() {
+            uid.style.display = 'none'
+            render(rs.map((r) => {
+                r.id = r.id.replace(/[a-z\d]/gi, '*')
+                return r
+            }))
+        }
+
+        function clean() {
+            uid.value = ''
+            uid.style.display = null
+            localStorage.removeItem('uid')
+            rs = []
+            render(rs)
+            document.getElementById('mask').style.display = 'none'
+        }
+    </script>
+</body>
+</html>
